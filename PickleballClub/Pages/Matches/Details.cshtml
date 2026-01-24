@@ -1,0 +1,76 @@
+@page
+@model PickleballClub.Pages.Matches.DetailsModel
+
+@{
+    ViewData["Title"] = "Chi tiết Trận đấu";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="d-flex justify-content-between align-items-start mb-5">
+        <div>
+            <h2 class="font-weight-bold mb-1">Kết quả Trận đấu</h2>
+            <div class="small opacity-50">Ngày đấu: @Model.Match.MatchDate.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+        <a asp-page="./Index" class="btn btn-sm btn-outline-light">Quay lại lịch sử</a>
+    </div>
+
+    <div class="row text-center align-items-center">
+        <!-- Team 1 -->
+        <div class="col-md-5">
+            <h4 class="text-info mb-4 text-uppercase letter-spacing-2 @(Model.Match.WinningSide == WinningSide.Team1 ? "fw-bold" : "opacity-50")">
+                TEAM 1 @(Model.Match.WinningSide == WinningSide.Team1 ? "🏆" : "")
+            </h4>
+            <div class="glass-card py-4 @(Model.Match.WinningSide == WinningSide.Team1 ? "border-success border-opacity-50" : "border-light border-opacity-10")" 
+                 style="background: @(Model.Match.WinningSide == WinningSide.Team1 ? "rgba(40, 167, 69, 0.1)" : "rgba(255, 255, 255, 0.05)");">
+                <div class="fs-4 @(Model.Match.WinningSide == WinningSide.Team1 ? "fw-bold text-white" : "text-white-50")">@Model.Match.Team1_Player1?.FullName</div>
+                @if (Model.Match.Team1_Player2 != null)
+                {
+                    <div class="fs-4 @(Model.Match.WinningSide == WinningSide.Team1 ? "fw-bold text-white" : "text-white-50") mt-2">@Model.Match.Team1_Player2?.FullName</div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="display-6 opacity-25">VS</div>
+        </div>
+
+        <!-- Team 2 -->
+        <div class="col-md-5">
+            <h4 class="text-warning mb-4 text-uppercase letter-spacing-2 @(Model.Match.WinningSide == WinningSide.Team2 ? "fw-bold" : "opacity-50")">
+                TEAM 2 @(Model.Match.WinningSide == WinningSide.Team2 ? "🏆" : "")
+            </h4>
+            <div class="glass-card py-4 @(Model.Match.WinningSide == WinningSide.Team2 ? "border-success border-opacity-50" : "border-light border-opacity-10")" 
+                 style="background: @(Model.Match.WinningSide == WinningSide.Team2 ? "rgba(40, 167, 69, 0.1)" : "rgba(255, 255, 255, 0.05)");">
+                <div class="fs-4 @(Model.Match.WinningSide == WinningSide.Team2 ? "fw-bold text-white" : "text-white-50")">@Model.Match.Team2_Player1?.FullName</div>
+                @if (Model.Match.Team2_Player2 != null)
+                {
+                    <div class="fs-4 @(Model.Match.WinningSide == WinningSide.Team2 ? "fw-bold text-white" : "text-white-50") mt-2">@Model.Match.Team2_Player2?.FullName</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 p-4 bg-dark bg-opacity-25 rounded d-flex justify-content-around align-items-center">
+        <div class="text-center">
+            <div class="small text-secondary text-uppercase mb-1">Thể thức</div>
+            <div class="fw-bold">@Model.Match.Format</div>
+        </div>
+        <div class="text-center">
+            <div class="small text-secondary text-uppercase mb-1">Tính điểm Rank</div>
+            <div>
+                @if (Model.Match.IsRanked)
+                {
+                    <span class="badge bg-info text-dark">Có</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Không</span>
+                }
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="small text-secondary text-uppercase mb-1">Sự kiện / Kèo</div>
+            <div class="fw-bold text-info">@(Model.Match.Challenge?.Title ?? "Giao hữu")</div>
+        </div>
+    </div>
+</div>

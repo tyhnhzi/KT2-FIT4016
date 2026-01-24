@@ -1,0 +1,44 @@
+@page
+@model PickleballClub.Pages.News.EditModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Tin tức";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="text-center mb-5">
+        <h2 class="font-weight-bold mb-2">Chỉnh sửa Tin tức</h2>
+        <div class="text-white-50">Cập nhật nội dung thông báo</div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="post" class="glass-card p-4" style="background: rgba(255, 255, 255, 0.05);">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="News.Id" />
+                <input type="hidden" asp-for="News.PostedDate" />
+
+                <div class="mb-4">
+                    <label asp-for="News.Title" class="form-label text-info small text-uppercase">Tiêu đề</label>
+                    <input asp-for="News.Title" class="form-control" />
+                    <span asp-validation-for="News.Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="News.Content" class="form-label text-info small text-uppercase">Nội dung</label>
+                    <textarea asp-for="News.Content" class="form-control" rows="10"></textarea>
+                    <span asp-validation-for="News.Content" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-page="./Index" class="btn btn-outline-light px-4">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

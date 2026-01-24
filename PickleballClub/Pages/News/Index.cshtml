@@ -1,0 +1,41 @@
+@page
+@model PickleballClub.Pages.News.IndexModel
+
+@{
+    ViewData["Title"] = "Tin tức";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 text-center w-100">
+        <h2 class="font-weight-bold mb-0">Tin tức & Thông báo</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-page="Create" class="btn btn-glass shadow-lg">Đăng tin mới</a>
+        }
+    </div>
+
+    @foreach (var item in Model.News) {
+        <div class="mb-4 pb-4 border-bottom border-light border-opacity-10">
+            <h4 class="text-info fw-bold mb-1">@item.Title</h4>
+            <div class="small opacity-50 mb-3"><i class="bi bi-calendar3 me-2"></i>@item.PostedDate.ToString("dd/MM/yyyy HH:mm")</div>
+            <div class="text-light leading-relaxed">
+                @Html.Raw(item.Content.Replace("\n", "<br/>"))
+            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="mt-3 text-end opacity-75">
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-2"><i class="bi bi-pencil me-1"></i>Sửa</a>
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Xóa</a>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!Model.News.Any())
+    {
+        <div class="text-center text-secondary py-5 opacity-50">
+            <i class="bi bi-newspaper display-1 mb-3"></i>
+            <p>Chưa có tin tức nào được đăng.</p>
+        </div>
+    }
+</div>

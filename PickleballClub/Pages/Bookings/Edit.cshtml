@@ -1,0 +1,70 @@
+@page
+@model PickleballClub.Pages.Bookings.EditModel
+@using PickleballClub.Models
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Đặt sân";
+}
+
+<h1>Chỉnh sửa Đặt sân</h1>
+
+<h4>Thông tin Đặt sân</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Booking.Id" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Booking.MemberId" class="control-label">Hội viên</label>
+                <select asp-for="Booking.MemberId" class="form-control" asp-items="ViewBag.MemberList"></select>
+                <span asp-validation-for="Booking.MemberId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Booking.CourtId" class="control-label">Sân</label>
+                <select asp-for="Booking.CourtId" class="form-control" asp-items="ViewBag.CourtList"></select>
+                <span asp-validation-for="Booking.CourtId" class="text-danger"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Booking.StartTime" class="control-label">Bắt đầu</label>
+                        <input asp-for="Booking.StartTime" class="form-control" />
+                        <span asp-validation-for="Booking.StartTime" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Booking.EndTime" class="control-label">Kết thúc</label>
+                        <input asp-for="Booking.EndTime" class="form-control" />
+                        <span asp-validation-for="Booking.EndTime" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="Booking.Status" class="control-label">Trạng thái</label>
+                <select asp-for="Booking.Status" class="form-control" asp-items="Html.GetEnumSelectList<BookingStatus>()"></select>
+                <span asp-validation-for="Booking.Status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Booking.Notes" class="control-label">Ghi chú</label>
+                <textarea asp-for="Booking.Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Booking.Notes" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

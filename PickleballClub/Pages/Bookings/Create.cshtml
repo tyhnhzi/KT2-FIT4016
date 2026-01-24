@@ -1,0 +1,72 @@
+@page
+@model PickleballClub.Pages.Bookings.CreateModel
+
+@{
+    ViewData["Title"] = "Đặt sân";
+}
+
+<div class="glass-card mt-4 mx-auto fade-in-up" style="max-width: 650px;">
+    <h2 class="mb-4 text-center font-weight-bold">Đặt sân Pickleball</h2>
+    
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="mb-4">
+                <label asp-for="Booking.MemberId" class="form-label small text-uppercase opacity-75">Chọn Hội viên</label>
+                <select asp-for="Booking.MemberId" class="form-select" asp-items="ViewBag.MemberList">
+                    <option value="">-- Chọn hội viên --</option>
+                </select>
+                <span asp-validation-for="Booking.MemberId" class="text-danger"></span>
+            </div>
+        }
+
+        <div class="mb-4">
+            <label asp-for="Booking.CourtId" class="form-label small text-uppercase opacity-75">Chọn Sân</label>
+            <select asp-for="Booking.CourtId" class="form-select" asp-items="ViewBag.CourtList">
+                <option value="">-- Chọn sân Pickleball --</option>
+            </select>
+            <span asp-validation-for="Booking.CourtId" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label asp-for="Booking.StartTime" class="form-label small text-uppercase opacity-75">Thời gian Bắt đầu</label>
+                <input asp-for="Booking.StartTime" type="datetime-local" class="form-control" />
+                <span asp-validation-for="Booking.StartTime" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="Booking.EndTime" class="form-label small text-uppercase opacity-75">Thời gian Kết thúc</label>
+                <input asp-for="Booking.EndTime" type="datetime-local" class="form-control" />
+                <span asp-validation-for="Booking.EndTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Booking.Notes" class="form-label small text-uppercase opacity-75">Ghi chú / Nội dung</label>
+            <textarea asp-for="Booking.Notes" class="form-control" rows="3" placeholder="Ví dụ: Đặt sân cho nhóm văn phòng..."></textarea>
+            <span asp-validation-for="Booking.Notes" class="text-danger"></span>
+        </div>
+
+        @if (!User.IsInRole("Admin"))
+        {
+            <div class="alert alert-info py-2 bg-opacity-10 border-info border-opacity-25 text-white small mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Yêu cầu đặt sân của bạn sẽ được Quản trị viên phê duyệt trước khi hiển thị công khai.
+            </div>
+        }
+
+        <div class="d-flex justify-content-between mt-5 pt-3 border-top border-secondary border-opacity-20">
+            <a asp-page="Index" class="btn btn-outline-light px-4 d-flex align-items-center" style="border-radius: 12px; border-color: rgba(255,255,255,0.2) !important;">
+                <i class="bi bi-arrow-left me-2"></i> Quay lại
+            </a>
+            <button type="submit" class="btn btn-glass px-5 shadow-lg">Xác nhận đặt sân</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}

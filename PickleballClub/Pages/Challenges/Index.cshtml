@@ -1,0 +1,108 @@
+@page
+@model PickleballClub.Pages.Challenges.IndexModel
+@using PickleballClub.Models
+
+@{
+    ViewData["Title"] = "Sàn đấu Kèo";
+}
+
+<div class="mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="font-weight-bold">Sàn đấu Kèo & Giải trí</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("Member"))
+        {
+            <a asp-page="Create" class="btn btn-glass shadow-lg">Tạo Kèo mới</a>
+        }
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model.Challenges) {
+            <div class="col-md-6 col-lg-4 mb-4 fade-in-up">
+                <div class="glass-card h-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h4 class="mb-0 text-white fw-bold" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3em; line-height: 1.5em;">@item.Title</h4>
+                        <span class="badge @(item.Status switch { ChallengeStatus.Ongoing => "badge-pending", ChallengeStatus.Pending => "bg-warning", _ => "badge-confirmed" })">
+                            @(item.Status switch {
+                                ChallengeStatus.Open => "Sẵn sàng",
+                                ChallengeStatus.Ongoing => "Đang đấu",
+                                ChallengeStatus.Finished => "Kết thúc",
+                                ChallengeStatus.Pending => "Chờ duyệt",
+                                _ => item.Status.ToString()
+                            })
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3 flex-grow-1">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25">@item.Type</span>
+                            <span class="badge bg-secondary bg-opacity-25 text-white border border-white border-opacity-25">@item.GameMode</span>
+                        </div>
+                        <div class="text-label mb-1 text-info">Mô tả</div>
+                        <p class="text-white small opacity-100" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.5em;">@item.Description</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="text-label mb-1 text-warning">Phần thưởng</div>
+                        <div class="fw-bold text-white fs-5">@item.RewardDescription</div>
+                    </div>
+
+                    @if (item.EntryFee > 0)
+                    {
+                        <div class="fee-bar text-white">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-wallet2 me-2 text-info opacity-75"></i>
+                                <span class="opacity-50 me-1">Lệ phí:</span>
+                                <span class="text-warning fw-bold">@item.EntryFee.ToString("N0")đ</span>
+                            </div>
+                            <div class="vr mx-2 opacity-10"></div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-trophy me-2 text-warning opacity-75"></i>
+                                <span class="opacity-50 me-1">Quỹ thưởng:</span>
+                                <span class="text-info fw-bold">@item.PrizePool.ToString("N0")đ</span>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-light border-opacity-10">
+                        <div class="text-label text-white-50" style="letter-spacing: 0;">
+                            <i class="bi bi-people me-1"></i> @(item.Participants?.Count ?? 0) tham gia
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            @if (User.IsInRole("Admin") && item.Status == ChallengeStatus.Pending)
+                            {
+                                <form method="post" asp-page-handler="Approve" asp-route-id="@item.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success shadow-sm px-3" style="border-radius: 10px;">DUYỆT</button>
+                                </form>
+                            }
+
+                            <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-light px-3" style="border-radius: 10px; border-color: rgba(255,255,255,0.2);">Xem</a>
+                            
+                            @if (User.IsInRole("Admin"))
+                            {
+                                @if (item.Status == ChallengeStatus.Open)
+                                {
+                                    <form method="post" asp-page-handler="Start" asp-route-id="@item.Id" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success shadow-sm px-3" style="border-radius: 10px;">Start</button>
+                                    </form>
+                                }
+                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning text-warning" style="border-radius: 10px;">Sửa</a>
+                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger text-danger" style="border-radius: 10px;">Xóa</a>
+                            }
+                            else if (item.Status == ChallengeStatus.Open && !User.IsInRole("Guest"))
+                            {
+                                <form method="post" asp-page-handler="Join" asp-route-id="@item.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-glass px-4" style="padding: 0.4rem 1.2rem; font-size: 0.75rem; border-radius: 10px;">THAM GIA</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}

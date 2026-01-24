@@ -1,0 +1,67 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký thành viên";
+}
+
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5 fade-in-up">
+        <div class="glass-card">
+            <h2 class="text-center font-weight-bold mb-4">@ViewData["Title"]</h2>
+            
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                
+                <div class="mb-4">
+                    <label asp-for="Input.FullName" class="login-label mb-2 d-block">Họ và tên</label>
+                    <input asp-for="Input.FullName" class="form-control form-control-lg" placeholder="Nguyễn Văn A" />
+                    <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label asp-for="Input.DOB" class="login-label mb-2 d-block">Ngày sinh</label>
+                        <input asp-for="Input.DOB" class="form-control form-control-lg" type="date" />
+                        <span asp-validation-for="Input.DOB" class="text-danger small"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Input.PhoneNumber" class="login-label mb-2 d-block">Số điện thoại</label>
+                        <input asp-for="Input.PhoneNumber" class="form-control form-control-lg" placeholder="0123..." />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.Email" class="login-label mb-2 d-block">Email đăng ký</label>
+                    <input asp-for="Input.Email" class="form-control form-control-lg" autocomplete="username" aria-required="true" placeholder="vidu@gmail.com" />
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.Password" class="login-label mb-2 d-block">Mật khẩu</label>
+                    <input asp-for="Input.Password" class="form-control form-control-lg" autocomplete="new-password" aria-required="true" placeholder="Tối thiểu 6 ký tự" />
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.ConfirmPassword" class="login-label mb-2 d-block">Xác nhận mật khẩu</label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg" autocomplete="new-password" aria-required="true" placeholder="Nhập lại mật khẩu" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <button id="registerSubmit" type="submit" class="btn btn-glass w-100 shadow-lg" style="padding: 1rem;">ĐĂNG KÝ NGAY</button>
+                </div>
+
+                <div class="text-center border-top border-light border-opacity-10 pt-4 mt-2">
+                    <span class="small opacity-75">Đã có tài khoản?</span>
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="small ms-2 fw-bold" id="login-link">Đăng nhập tại đây</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

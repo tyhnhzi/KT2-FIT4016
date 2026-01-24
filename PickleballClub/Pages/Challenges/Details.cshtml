@@ -1,0 +1,84 @@
+@page
+@model PickleballClub.Pages.Challenges.DetailsModel
+
+@{
+    ViewData["Title"] = "Chi tiết Kèo đấu";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h2 class="font-weight-bold mb-1">@Model.Challenge.Title</h2>
+            <div class="small opacity-50">@Model.Challenge.Status | @Model.Challenge.Type (@Model.Challenge.GameMode)</div>
+        </div>
+        <a asp-page="./Index" class="btn btn-outline-light px-4 d-flex align-items-center" style="border-radius: 12px; border-color: rgba(255,255,255,0.2) !important;">Quay lại</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model.Challenge.GameMode == ChallengeGameMode.TeamBattle)
+            {
+                <div class="glass-card bg-primary bg-opacity-10 border-info mb-4 py-3">
+                    <div class="row text-center align-items-center">
+                        <div class="col">
+                            <h6 class="text-info opacity-75">TEAM A</h6>
+                            <div class="display-4 fw-bold">@Model.Challenge.CurrentScore_TeamA</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="fs-1 opacity-25">VS</div>
+                            <div class="small text-warning">Target: @(Model.Challenge.Config_TargetWins?.ToString() ?? "∞")</div>
+                        </div>
+                        <div class="col">
+                            <h6 class="text-warning opacity-75">TEAM B</h6>
+                            <div class="display-4 fw-bold">@Model.Challenge.CurrentScore_TeamB</div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <h5 class="text-info mb-3">Thông tin Kèo</h5>
+            <div class="p-3 bg-dark bg-opacity-25 rounded mb-4">
+                @Model.Challenge.Description
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <strong class="text-warning small text-uppercase letter-spacing-1">Phần thưởng:</strong>
+                    <p class="fs-5 fw-bold mb-0">@Model.Challenge.RewardDescription</p>
+                </div>
+                <div class="col-6">
+                    <strong class="text-info small text-uppercase letter-spacing-1">Điều kiện:</strong>
+                    <p class="fs-5 fw-bold mb-0">Lệ phí @Model.Challenge.EntryFee.ToString("N0")đ</p>
+                </div>
+            </div>
+
+            <div class="alert bg-dark py-3 bg-opacity-25 text-white">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="bi bi-gift display-6"></i>
+                    </div>
+                    <div class="col">
+                        <h5 class="mb-1">Giá trị Giải thưởng (Pot)</h5>
+                        <div class="fw-bold fs-4">@Model.Challenge.PrizePool.ToString("N0")đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 border-start border-secondary border-opacity-20">
+            <h5 class="mb-3"><i class="bi bi-people me-2"></i>Người tham gia (@(Model.Challenge.Participants?.Count ?? 0))</h5>
+            <div class="list-group list-group-flush bg-transparent">
+                @foreach (var p in Model.Challenge.Participants ?? new List<Participant>())
+                {
+                    <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-0 py-2 d-flex justify-content-between align-items-center">
+                        <span class="text-white">@p.Member?.FullName</span>
+                        <span class="small text-secondary">Rank @p.Member?.RankLevel.ToString("0.0")</span>
+                    </div>
+                }
+                @if (!(Model.Challenge.Participants?.Any() ?? false))
+                {
+                    <div class="text-secondary small italic">Chưa có ai tham gia.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

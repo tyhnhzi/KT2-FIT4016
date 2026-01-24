@@ -1,0 +1,69 @@
+@page
+@model PickleballClub.Pages.Members.EditModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Hội viên";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="text-center mb-5">
+        <h2 class="font-weight-bold mb-2">Chỉnh sửa Hội viên</h2>
+        <div class="text-white-50">Cập nhật thông tin và trạng thái</div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" class="glass-card p-4" style="background: rgba(255, 255, 255, 0.05);">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Member.Id" />
+                <input type="hidden" asp-for="Member.IdentityUserId" />
+                <input type="hidden" asp-for="Member.JoinDate" />
+                <input type="hidden" asp-for="Member.CreatedDate" />
+
+                <div class="mb-3">
+                    <label asp-for="Member.FullName" class="form-label text-info small text-uppercase">Họ và tên</label>
+                    <input asp-for="Member.FullName" class="form-control" />
+                    <span asp-validation-for="Member.FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Member.PhoneNumber" class="form-label text-info small text-uppercase">Số điện thoại</label>
+                        <input asp-for="Member.PhoneNumber" class="form-control" />
+                        <span asp-validation-for="Member.PhoneNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Member.DOB" class="form-label text-info small text-uppercase">Ngày sinh</label>
+                        <input asp-for="Member.DOB" class="form-control" type="date" />
+                        <span asp-validation-for="Member.DOB" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Member.RankLevel" class="form-label text-warning small text-uppercase">Trình độ (DUPR)</label>
+                        <input asp-for="Member.RankLevel" class="form-control" type="number" step="0.1" min="0" max="10" />
+                        <span asp-validation-for="Member.RankLevel" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Member.Status" class="form-label text-warning small text-uppercase">Trạng thái</label>
+                        <select asp-for="Member.Status" class="form-select">
+                            <option value="Active">Hoạt động (Active)</option>
+                            <option value="Inactive">Ngưng hoạt động (Inactive)</option>
+                        </select>
+                        <span asp-validation-for="Member.Status" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-page="./Index" class="btn btn-outline-light px-4">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

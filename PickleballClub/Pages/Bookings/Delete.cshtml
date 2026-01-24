@@ -1,0 +1,42 @@
+@page
+@model PickleballClub.Pages.Bookings.DeleteModel
+
+@{
+    ViewData["Title"] = "Xóa Đặt sân";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="text-center mb-4">
+        <h2 class="font-weight-bold text-danger mb-2">Xác nhận hủy đặt sân</h2>
+        <div class="text-white-50">Lưu ý: Hủy đặt sân sẽ xóa hoàn toàn bản ghi này khỏi hệ thống. Nếu bạn chỉ muốn hủy, hãy chuyển trạng thái sang Cancelled.</div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-card p-4 border border-danger border-opacity-25" style="background: rgba(220, 53, 69, 0.05);">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-white-50">Người đặt</dt>
+                    <dd class="col-sm-8 fw-bold">@Html.DisplayFor(model => model.Booking.Member.FullName)</dd>
+
+                    <dt class="col-sm-4 text-white-50">Sân</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.Court.Name)</dd>
+
+                    <dt class="col-sm-4 text-white-50">Thời gian</dt>
+                    <dd class="col-sm-8">
+                        @Model.Booking.StartTime.ToString("dd/MM/yyyy") <br/>
+                        <span class="text-info">@Model.Booking.StartTime.ToString("HH:mm") - @Model.Booking.EndTime.ToString("HH:mm")</span>
+                    </dd>
+
+                    <dt class="col-sm-4 text-white-50">Ghi chú</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.Notes)</dd>
+                </dl>
+
+                <form method="post" class="mt-4 d-flex justify-content-between">
+                    <input type="hidden" asp-for="Booking.Id" />
+                    <a asp-page="./Index" class="btn btn-outline-light px-4">Quay lại</a>
+                    <button type="submit" class="btn btn-danger px-4 shadow-sm">Xóa vĩnh viễn</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

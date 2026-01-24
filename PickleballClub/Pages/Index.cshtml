@@ -1,0 +1,91 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "CLB Vợt Thủ Phố Núi";
+}
+
+<div class="row mt-4">
+    <!-- Main Info -->
+    <div class="col-lg-8">
+        <div class="glass-card mb-4 text-center">
+            <h1 class="display-5 font-weight-bold mb-3">Vợt Thủ Phố Núi</h1>
+            <p class="lead italic">"Vui - Khỏe - Có Thưởng"</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="glass-card text-center h-100 py-4 d-flex flex-column justify-content-center px-2">
+                    <div class="text-label mb-2">Kèo đang mở</div>
+                    <div class="stat-value mb-1" style="font-size: 2rem;">@Model.OpenChallengesCount</div>
+                    <div>
+                        <a asp-page="/Challenges/Index" class="btn btn-sm btn-glass mt-3 w-100" style="font-size: 0.6rem;">Sàn đấu</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="glass-card text-center h-100 py-4 d-flex flex-column justify-content-center px-2">
+                    <div class="text-label mb-2">Lịch đặt sắp tới</div>
+                    <div class="stat-value mb-1" style="font-size: 2rem;">@Model.UpcomingBookingsCount</div>
+                    <div>
+                        <a asp-page="/Bookings/Index" class="btn btn-sm btn-glass mt-3 w-100" style="font-size: 0.6rem;">Lịch đặt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card bg-opacity-10 border-info">
+            <h4 class="mb-3"><i class="bi bi-megaphone me-2 text-info"></i>Tin mới nhất</h4>
+            <p class="text-white-50 mb-0">Chưa có thông báo mới nào hôm nay.</p>
+        </div>
+    </div>
+
+    <!-- Side Widget: Top Ranking -->
+    <div class="col-lg-4">
+        <div class="glass-card" style="border-color: rgba(255, 193, 7, 0.2);">
+            <h4 class="mb-4"><i class="bi bi-award-fill text-warning me-2"></i>Bảng vàng</h4>
+            <div class="list-group list-group-flush bg-transparent">
+                @for (int i = 0; i < Model.TopRankingMembers.Count; i++)
+                {
+                    var m = Model.TopRankingMembers[i];
+                    <div class="list-group-item bg-transparent border-light border-opacity-10 text-white px-0 py-3 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <span class="me-3 fs-3 fw-900 opacity-25">@(i + 1)</span>
+                            <div>
+                                <div class="fw-bold fs-5">@m.FullName</div>
+                                <div class="text-white-50 small">Rank: <span class="text-warning">@m.RankLevel.ToString("0.0")</span></div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                             @if (m.RankLevel >= 5.0)
+                             {
+                                 <span class="badge badge-pro">PRO</span>
+                             }
+                             else
+                             {
+                                 <div class="text-info small fw-800">AMATEUR</div>
+                             }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <a asp-page="/Members/Index" class="btn btn-sm btn-link text-white text-decoration-none">Xem toàn bộ bảng xếp hạng</a>
+            </div>
+        </div>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Member"))
+        {
+            <div class="glass-card mt-4">
+                <h5>Phím tắt</h5>
+                <div class="d-grid gap-2">
+                    <a asp-page="/Bookings/Create" class="btn btn-glass btn-sm text-start"><i class="bi bi-calendar-plus me-2"></i>Đặt sân ngay</a>
+                    <a asp-page="/Challenges/Create" class="btn btn-glass btn-sm text-start"><i class="bi bi-plus-circle me-2"></i>Tạo kèo mới</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}

@@ -1,0 +1,30 @@
+@page
+@model PickleballClub.Pages.Treasury.CreateCategoryModel
+
+@{
+    ViewData["Title"] = "Quản lý Danh mục";
+}
+
+<div class="glass-card mt-4 mx-auto" style="max-width: 500px;">
+    <h2>Thêm Danh mục Thu/Chi</h2>
+    <p class="text-secondary small">Ví dụ: Tiền sân, Mua bóng, Tiền phạt...</p>
+
+    <form method="post">
+        <div class="mb-3">
+            <label asp-for="Category.CategoryName" class="form-label">Tên danh mục</label>
+            <input asp-for="Category.CategoryName" class="form-control bg-dark border-secondary text-white" />
+        </div>
+        <div class="mb-4">
+            <label asp-for="Category.Type" class="form-label">Loại</label>
+            <select asp-for="Category.Type" class="form-select bg-dark border-secondary text-white" asp-items="Html.GetEnumSelectList<TransactionType>()">
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-page="Index" class="btn btn-outline-light px-4 d-flex align-items-center" style="border-radius: 12px; border-color: rgba(255,255,255,0.2) !important;">
+                <i class="bi bi-arrow-left me-2"></i> Quay lại
+            </a>
+            <button type="submit" class="btn btn-glass px-4">Lưu danh mục</button>
+        </div>
+    </form>
+</div>

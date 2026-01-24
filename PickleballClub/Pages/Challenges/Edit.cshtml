@@ -1,0 +1,87 @@
+@page
+@model PickleballClub.Pages.Challenges.EditModel
+@using PickleballClub.Models
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Chiến dịch";
+}
+
+<h1>Chỉnh sửa Chiến dịch</h1>
+
+<h4>Thông tin Kèo/Giải</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Challenge.Id" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Challenge.Title" class="control-label">Tiêu đề</label>
+                <input asp-for="Challenge.Title" class="form-control" />
+                <span asp-validation-for="Challenge.Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Challenge.Description" class="control-label">Mô tả</label>
+                <textarea asp-for="Challenge.Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Challenge.Description" class="text-danger"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Challenge.Type" class="control-label">Loại hình</label>
+                        <select asp-for="Challenge.Type" class="form-control" asp-items="Html.GetEnumSelectList<ChallengeType>()"></select>
+                        <span asp-validation-for="Challenge.Type" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Challenge.GameMode" class="control-label">Chế độ</label>
+                        <select asp-for="Challenge.GameMode" class="form-control" asp-items="Html.GetEnumSelectList<ChallengeGameMode>()"></select>
+                        <span asp-validation-for="Challenge.GameMode" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Challenge.EntryFee" class="control-label">Lệ phí (VNĐ)</label>
+                        <input asp-for="Challenge.EntryFee" class="form-control" />
+                        <span asp-validation-for="Challenge.EntryFee" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Challenge.PrizePool" class="control-label">Quỹ thưởng (VNĐ)</label>
+                        <input asp-for="Challenge.PrizePool" class="form-control" />
+                        <span asp-validation-for="Challenge.PrizePool" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="form-group mb-3">
+                <label asp-for="Challenge.RewardDescription" class="control-label">Mô tả phần thưởng</label>
+                <input asp-for="Challenge.RewardDescription" class="form-control" />
+                <span asp-validation-for="Challenge.RewardDescription" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Challenge.Status" class="control-label">Trạng thái</label>
+                <select asp-for="Challenge.Status" class="form-control" asp-items="Html.GetEnumSelectList<ChallengeStatus>()"></select>
+                <span asp-validation-for="Challenge.Status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

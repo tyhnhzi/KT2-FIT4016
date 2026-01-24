@@ -1,0 +1,48 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5 fade-in-up">
+        <div class="glass-card">
+            <h2 class="text-center font-weight-bold mb-4">@ViewData["Title"]</h2>
+            
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                
+                <div class="mb-4">
+                    <label asp-for="Input.Email" class="login-label mb-2 d-block">Email đăng nhập</label>
+                    <input asp-for="Input.Email" class="form-control form-control-lg" autocomplete="username" aria-required="true" placeholder="dangnhap@gmail.com" />
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.Password" class="login-label mb-2 d-block">Mật khẩu</label>
+                    <input asp-for="Input.Password" class="form-control form-control-lg" autocomplete="current-password" aria-required="true" placeholder="••••••••" />
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMe" />
+                    <label class="form-check-label ms-2 small opacity-75" for="rememberMe">Ghi nhớ đăng nhập</label>
+                </div>
+
+                <div class="mb-4">
+                    <button id="login-submit" type="submit" class="btn btn-glass w-100 shadow-lg" style="padding: 1rem;">ĐĂNG NHẬP NGAY</button>
+                </div>
+
+                <div class="d-flex justify-content-between border-top border-light border-opacity-10 pt-4 mt-2">
+                    <a id="forgot-password" asp-page="./ForgotPassword" class="small">Quên mật khẩu?</a>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="small" id="register-link">Đăng ký thành viên</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

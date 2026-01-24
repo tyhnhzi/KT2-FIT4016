@@ -1,0 +1,104 @@
+@page
+@model PickleballClub.Pages.Matches.IndexModel
+
+@{
+    ViewData["Title"] = "Lịch sử Trận đấu";
+}
+
+<div class="glass-card mt-4 fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 text-center w-100">
+        <h2 class="font-weight-bold mb-0">Lịch sử Trận đấu</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("Referee"))
+        {
+            <a asp-page="Create" class="btn btn-glass shadow-lg">Ghi nhận Trận đấu</a>
+        }
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Ngày đấu</th>
+                    <th>Kèo / Sự kiện</th>
+                    <th>TEAM 1</th>
+                    <th class="text-center">VS</th>
+                    <th>TEAM 2</th>
+                    <th class="text-center">Ranked</th>
+                    <th class="text-center">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Matches) {
+                    <tr>
+                        <td class="small opacity-75">@item.MatchDate.ToString("dd/MM HH:mm")</td>
+                        <td>
+                            @if (item.Challenge != null)
+                            {
+                                <span class="badge badge-confirmed">@item.Challenge.Title</span>
+                            }
+                            else
+                            {
+                                <span class="text-secondary small">Giao hữu</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="@(item.WinningSide == WinningSide.Team1 ? "fw-bold text-success" : "opacity-75")">
+                                @item.Team1_Player1?.FullName
+                                @if (item.Team1_Player2 != null)
+                                {
+                                    <br /><small>@item.Team1_Player2?.FullName</small>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-center text-secondary small opacity-50">
+                            @if (item.WinningSide == WinningSide.Team1) { <i class="bi bi-chevron-left text-success"></i> }
+                            vs
+                            @if (item.WinningSide == WinningSide.Team2) { <i class="bi bi-chevron-right text-success"></i> }
+                        </td>
+                        <td>
+                            <div class="@(item.WinningSide == WinningSide.Team2 ? "fw-bold text-success" : "opacity-75")">
+                                @item.Team2_Player1?.FullName
+                                @if (item.Team2_Player2 != null)
+                                {
+                                    <br /><small>@item.Team2_Player2?.FullName</small>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            @if (item.IsRanked)
+                            {
+                                <i class="bi bi-patch-check-fill text-info" title="Có tính điểm"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-record-circle text-muted" title="Không tính điểm"></i>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (!item.IsApproved)
+                            {
+                                <div class="d-flex flex-column align-items-center gap-2">
+                                    <span class="badge badge-pending">Chờ duyệt</span>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <form method="post" asp-page-handler="Approve" asp-route-id="@item.Id">
+                                            <button type="submit" class="btn btn-xs btn-success py-1 px-2" style="font-size: 0.65rem;">DUYỆT</button>
+                                        </form>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="badge badge-confirmed">Đã duyệt</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}
