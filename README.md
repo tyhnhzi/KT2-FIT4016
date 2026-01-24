@@ -87,8 +87,8 @@ Hệ thống quản lý câu lạc bộ Pickleball, bao gồm quản lý thành 
 
 Khi chạy lần đầu, hệ thống có thể tạo các tài khoản mẫu (nếu đã cấu hình trong `DbInitializer`):
 
-- **Admin**: `admin@pickleball.com` / `Password123!`
-- **Member**: `member@pickleball.com` / `Password123!`
+- **Admin**: `admin@pcm.com` / `Admin@123!`
+- **Member**: `member@pcm.com` / `Member@123!`
 
 ---
 
