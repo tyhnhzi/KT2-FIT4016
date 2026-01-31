@@ -91,7 +91,7 @@ Hệ thống tạo sẵn 2 tài khoản:
 **Request:**
 ```json
 {
-  "email": "admin@pickleballclub.com",
+  "email": "admin@pcm.com",
   "password": "Admin@123"
 }
 ```
@@ -100,7 +100,7 @@ Hệ thống tạo sẵn 2 tài khoản:
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "email": "admin@pickleballclub.com",
+  "email": "admin@pcm.com",
   "roles": ["Admin"]
 }
 ```
