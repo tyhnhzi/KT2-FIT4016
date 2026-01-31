@@ -40,7 +40,7 @@ namespace PickleballClub.Data
                         FullName = "Quản trị viên Hệ thống",
                         DOB = new DateTime(1990, 5, 15),
                         PhoneNumber = "0901234567",
-                        JoinDate = DateTime.Now.AddMonths(-6),
+                        JoinDate = DateTime.UtcNow.AddMonths(-6),
                         RankLevel = 5.0,
                         Status = "Active"
                     });
@@ -67,7 +67,7 @@ namespace PickleballClub.Data
                             FullName = names[i],
                             DOB = new DateTime(1985 + i, 1, 1),
                             PhoneNumber = $"098765432{i}",
-                            JoinDate = DateTime.Now.AddDays(-30 * (i + 1)),
+                            JoinDate = DateTime.UtcNow.AddDays(-30 * (i + 1)),
                             RankLevel = 2.5 + (i * 0.2),
                             Status = "Active"
                         });
@@ -108,8 +108,8 @@ namespace PickleballClub.Data
                         RewardDescription = i % 2 == 0 ? "Vợt Selkirk + 1.000.000đ" : "Bộ phụ kiện Joola + 500.000đ",
                         EntryFee = 150000,
                         Status = i < 6 ? ChallengeStatus.Open : ChallengeStatus.Finished,
-                        CreatedDate = DateTime.Now.AddDays(-10),
-                        ModifiedDate = DateTime.Now.AddDays(-10)
+                        CreatedDate = DateTime.UtcNow.AddDays(-10),
+                        ModifiedDate = DateTime.UtcNow.AddDays(-10)
                     });
                 }
                 await context.SaveChangesAsync();
@@ -146,11 +146,11 @@ namespace PickleballClub.Data
                     {
                         MemberId = members[i % members.Count].Id,
                         CourtId = courts[i % courts.Count].Id,
-                        StartTime = DateTime.Now.AddDays(i + 1).Date.AddHours(17),
-                        EndTime = DateTime.Now.AddDays(i + 1).Date.AddHours(19),
+                        StartTime = DateTime.UtcNow.AddDays(i + 1).Date.AddHours(17),
+                        EndTime = DateTime.UtcNow.AddDays(i + 1).Date.AddHours(19),
                         Notes = "Đặt sân tập luyện chuyên sâu",
                         Status = BookingStatus.Confirmed,
-                        CreatedDate = DateTime.Now.AddDays(-i)
+                        CreatedDate = DateTime.UtcNow.AddDays(-i)
                     });
                 }
                 await context.SaveChangesAsync();
@@ -163,7 +163,7 @@ namespace PickleballClub.Data
                 {
                     context.Matches.Add(new Match
                     {
-                        MatchDate = DateTime.Now.AddDays(-i - 1),
+                        MatchDate = DateTime.UtcNow.AddDays(-i - 1),
                         Format = i % 2 == 0 ? MatchFormat.Doubles : MatchFormat.Singles,
                         IsRanked = true,
                         Team1_Player1Id = members[0].Id,
@@ -183,7 +183,7 @@ namespace PickleballClub.Data
                 string[] newsTitles = { "Khai xuân Pickleball 2026", "Giải vô địch CLB mở rộng", "Tuyển thêm thành viên nòng cốt", "Lịch bảo trì sân bãi tháng 2", "Chương trình ưu đãi ngày lễ", "Cập nhật bảng xếp hạng DUPR tháng 1" };
                 foreach (var title in newsTitles)
                 {
-                    context.News.Add(new News { Title = title, Content = $"Nội dung thông tin chi tiết về {title} đã được hội đồng quản trị CLB phê duyệt và ban hành.", PostedDate = DateTime.Now.AddDays(-5) });
+                    context.News.Add(new News { Title = title, Content = $"Nội dung thông tin chi tiết về {title} đã được hội đồng quản trị CLB phê duyệt và ban hành.", PostedDate = DateTime.UtcNow.AddDays(-5) });
                 }
                 await context.SaveChangesAsync();
             }
@@ -213,7 +213,7 @@ namespace PickleballClub.Data
                     {
                         CategoryId = cat.Id,
                         Amount = cat.Type == TransactionType.Income ? (200000 * (i + 1)) : (-100000 * (i + 1)),
-                        TransactionDate = DateTime.Now.AddDays(-i - 1),
+                        TransactionDate = DateTime.UtcNow.AddDays(-i - 1),
                         Description = $"Giao dịch mẫu {i + 1}: {cat.CategoryName}"
                     });
                 }

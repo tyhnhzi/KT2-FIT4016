@@ -30,6 +30,25 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             builder.Entity<Models.News>().ToTable("248_News");
             builder.Entity<Models.Booking>().ToTable("248_Bookings");
 
+            // Configure decimal precision for Challenge entity
+            builder.Entity<Models.Challenge>()
+                .Property(c => c.EntryFee)
+                .HasPrecision(18, 2);
+
+            builder.Entity<Models.Challenge>()
+                .Property(c => c.PrizePool)
+                .HasPrecision(18, 2);
+
+            // Configure decimal precision for Participant entity
+            builder.Entity<Models.Participant>()
+                .Property(p => p.EntryFeeAmount)
+                .HasPrecision(18, 2);
+
+            // Configure decimal precision for Transaction entity
+            builder.Entity<Models.Transaction>()
+                .Property(t => t.Amount)
+                .HasPrecision(18, 2);
+
             // Configure Refactored Match Model
             builder.Entity<Models.Match>()
                 .HasOne(m => m.Team1_Player1)
