@@ -4,6 +4,9 @@
 [Ll]og/
 [Ll]ogs/
 
+# Agent files
+.agent/
+
 # Visual Studio cache/options
 .vs/
 .vscode/
