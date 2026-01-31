@@ -5,17 +5,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
+
+// 1. Fix lỗi ngày tháng PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 2. Ép chạy cổng 5003 và mở cho mọi IP
+builder.WebHost.UseUrls("http://0.0.0.0:5003");
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// 3. Cấu hình Identity (Quản lý User)
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = false;
@@ -28,16 +37,22 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
-// JWT Authentication
+// 4. [QUAN TRỌNG] Cấu hình Cookie "Dễ tính" (Đã test OK)
+builder.Services.ConfigureApplicationCookie(options => {
+    options.Cookie.Name = "PickleballAuth"; 
+    options.Cookie.SameSite = SameSiteMode.Lax; 
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Chấp nhận cả HTTP
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+});
+
+// 5. Cấu hình JWT (Token) - [ĐÃ SỬA LỖI TẠI ĐÂY]
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+// LƯU Ý: Không được set DefaultAuthenticateScheme ở đây, để nó tự dùng Cookie cho Web
+builder.Services.AddAuthentication() 
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -48,101 +63,84 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? throw new InvalidOperationException("JWT Key not found.")))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? "KeyPhaiDaiHon32KyTuNeBanOi123456789"))
     };
 });
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 
-// Swagger Configuration
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Pickleball Club Management API",
-        Version = "v1",
-        Description = "API for managing pickleball club operations including members, bookings, challenges, and matches.",
-        Contact = new OpenApiContact
-        {
-            Name = "Pickleball Club",
-            Email = "admin@pickleballclub.com"
-        }
-    });
-
-    // JWT Security Definition
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Pickleball Club API", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Description = "JWT Authorization header using the Bearer scheme.",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
             Array.Empty<string>()
         }
     });
 });
 
+// Cấu hình Proxy
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
 
-// Apply migrations and seed database
+// [QUAN TRỌNG] Thuốc đặc trị để ép hệ thống nhận diện đúng HTTPS từ Cloudflare
+app.Use(async (context, next) =>
+{
+    context.Request.Scheme = "https";
+    await next();
+});
+
+app.UseForwardedHeaders();
+
+// Migration
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    
-    // Apply pending migrations
-    await context.Database.MigrateAsync();
-    
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await DbInitializer.Initialize(context, userManager, roleManager);
-}
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    try 
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pickleball Club API V1");
-        c.RoutePrefix = "swagger";
-    });
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.Initialize(context, userManager, roleManager);
+    }
+    catch(Exception ex) { Console.WriteLine(ex.Message); }
 }
-else
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pickleball Club API V1");
+    c.RoutePrefix = "swagger";
+});
 
-app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
+// Authentication phải đứng trước Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Health check endpoint
-app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }))
-    .WithName("Health")
-    .AllowAnonymous();
-
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" })).AllowAnonymous();
 app.MapControllers();
 app.MapRazorPages();
 

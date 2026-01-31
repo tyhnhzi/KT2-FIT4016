@@ -37,10 +37,10 @@ namespace PickleballClub.Pages
                         {
                             IdentityUserId = userId,
                             FullName = User.Identity.Name ?? "New Member",
-                            JoinDate = DateTime.Now,
+                            JoinDate = DateTime.UtcNow,
                             RankLevel = 1.0,
                             Status = "Active",
-                            DOB = DateTime.Now.AddYears(-20), // Default
+                            DOB = DateTime.UtcNow.AddYears(-20), // Default
                             PhoneNumber = "0000000000"
                         };
                         _context.Members.Add(member);
@@ -66,7 +66,7 @@ namespace PickleballClub.Pages
                 .CountAsync(c => c.Status == ChallengeStatus.Open);
 
             UpcomingBookingsCount = await _context.Bookings
-                .CountAsync(b => b.StartTime > DateTime.Now && b.Status == BookingStatus.Confirmed);
+                .CountAsync(b => b.StartTime > DateTime.UtcNow && b.Status == BookingStatus.Confirmed);
 
             TopRankingMembers = await _context.Members
                 .OrderByDescending(m => m.RankLevel)

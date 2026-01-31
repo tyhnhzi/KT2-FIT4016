@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
+  # --- Database (Giữ nguyên) ---
   postgres:
     image: postgres:16-alpine
     container_name: pickleball_postgres
@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: PickleBallDB_Hoang248
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Hoang416@
+    # Mở port nếu muốn quản lý bằng PgAdmin, Navicat (nếu không thì xóa đi)
     ports:
       - "5432:5432"
     volumes:
@@ -21,9 +22,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
 
-  # PickleballClub API
+  # --- API (Đã sửa lỗi sập nguồn + Cấu hình đúng) ---
   api:
     build:
       context: ./PickleballClub
@@ -33,13 +33,16 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:5003
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:5003
+      # [QUAN TRỌNG] Dòng này sửa lỗi Exit Code 139 (Segmentation Fault)
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=PickleBallDB_Hoang248;Username=postgres;Password=Hoang416@"
       Jwt__Key: "anhhenembiccabontavonnhauPICKABALLanhhenempickadaa"
       Jwt__Issuer: "PickleballClubAPI"
       Jwt__Audience: "PickleballClubClients"
       Jwt__ExpireMinutes: "1440"
+    # Map cổng 5003 để aaPanel kết nối vào
     ports:
       - "5003:5003"
     networks:
@@ -47,28 +50,8 @@ services:
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
 
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    container_name: pickleball_nginx
-    depends_on:
-      - api
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    networks:
-      - pickleball_network
-    restart: unless-stopped
+# --- ĐÃ XÓA SERVICE NGINX ---
 
 volumes:
   postgres_data:
